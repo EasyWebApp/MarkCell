@@ -3,7 +3,7 @@
 import { join, resolve } from 'path';
 import Commander from 'commander';
 import { traverseFiles, loadFile, saveFile } from './File';
-import { mdx2jsx, createAsyncIndex } from './MDX';
+import { MarkdownMeta, mdx2jsx, createAsyncIndex } from './MDX';
 
 Commander.usage('[path] [options]')
     .option(
@@ -20,23 +20,27 @@ const [
 ] = Commander.args;
 
 (async () => {
-    const list: string[] = [];
+    const list: MarkdownMeta[] = [];
 
     for await (const path of traverseFiles(in_folder))
         if (/\.mdx$/.test(path)) {
             const file = join(out_folder, path.slice(in_folder.length))
                     .replace(/\\/g, '/')
                     .replace(/\.mdx$/, '.tsx'),
-                source = mdx2jsx(
+                { code, meta } = mdx2jsx(
                     (await loadFile(path)) + '',
                     Commander.package,
                     Commander.factory
                 );
 
-            await saveFile(file, source);
+            await saveFile(file, code);
 
-            list.push(file.slice(out_folder.length)),
-                console.log(`[save] ${resolve(file)}`);
+            list.push({
+                path: file.slice(out_folder.length),
+                meta
+            });
+
+            console.log(`[save] ${resolve(file)}`);
         }
 
     if (list[0])
