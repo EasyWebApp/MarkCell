@@ -23,9 +23,20 @@ npm install mark-cell -D
 }
 ```
 
+`index.html`
+
+```html
+<head>
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/prismjs@1.19.0/themes/prism-okaidia.css"
+    />
+</head>
+```
+
 ## User Cases
 
-https://web-cell.dev/BootCell-document/
+https://bootstrap.web-cell.dev/
 
 [1]: https://mdxjs.com/
 [2]: https://www.typescriptlang.org/docs/handbook/jsx.html

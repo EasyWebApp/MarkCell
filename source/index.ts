@@ -2,8 +2,9 @@
 
 import { join, resolve } from 'path';
 import Commander from 'commander';
+
 import { traverseFiles, loadFile, saveFile } from './File';
-import { MarkdownMeta, mdx2jsx, createAsyncIndex } from './MDX';
+import { MarkdownMeta, mdx2jsx, createAsyncIndex } from './generator';
 
 Commander.usage('[path] [options]')
     .option(
