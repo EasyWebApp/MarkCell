@@ -1,5 +1,9 @@
-import { parseMDX, stringifyMDX } from './MDX';
-import { ASTNode, parseYAML, parseTOML, stringifyJSON } from './utility';
+import { parseMDX, stringifyMDX } from './parser';
+import { ASTNode } from './type';
+import { parseYAML, parseTOML, stringifyJSON } from './utility';
+import { loadModule } from './File';
+import './polyfill';
+import { renderToStaticMarkup, createCell } from 'web-cell';
 
 export function mdx2jsx(
     raw: string,
@@ -72,4 +76,31 @@ export function createAsyncIndex(list: MarkdownMeta[]) {
         })
         .join(',')}
 ];`;
+}
+
+export async function* renderPages(page_folder: string, layout_folder: string) {
+    const pages = (await loadModule(page_folder)).default,
+        layouts = await loadModule(layout_folder);
+
+    for (let {
+        meta,
+        component,
+        paths: [path]
+    } of pages) {
+        const Layout = layouts[meta.layout];
+
+        if (!Layout)
+            throw new ReferenceError(`Can't find "${meta.layout}" layout`);
+
+        const Content = await component();
+
+        yield {
+            path,
+            code: renderToStaticMarkup(
+                <Layout {...meta}>
+                    <Content />
+                </Layout>
+            )
+        };
+    }
 }

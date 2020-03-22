@@ -1,6 +1,6 @@
 {
     "name": "mark-cell",
-    "version": "0.3.0",
+    "version": "0.4.0-alpha.0",
     "license": "LGPL-3.0",
     "author": "shiy2008@gmail.com",
     "description": "General MDX to TSX converter",
@@ -23,6 +23,7 @@
     "bin": "dist/index.js",
     "dependencies": {
         "commander": "^5.0.0",
+        "jsdom": "^16.2.1",
         "mdast-util-to-hast": "^8.1.0",
         "prismjs": "^1.19.0",
         "rehype-parse": "^6.0.2",
@@ -31,34 +32,40 @@
         "remark-parse": "^7.0.2",
         "remark-stringify": "^7.0.4",
         "toml": "^3.0.0",
+        "ts-node": "^8.7.0",
+        "typescript": "^3.8.3",
         "unified": "^8.4.2",
+        "web-cell": "^2.0.0-rc.20",
         "yaml": "^1.8.2"
     },
     "devDependencies": {
+        "@types/jsdom": "^16.1.0",
         "@types/node": "^13.9.1",
         "@types/prismjs": "^1.16.0",
         "@types/yaml": "^1.2.0",
         "husky": "^4.2.3",
         "lint-staged": "^10.0.8",
         "prettier": "^1.19.1",
-        "typescript": "^3.8.3"
+        "snabbdom": "^0.7.4"
     },
     "prettier": {
         "singleQuote": true,
         "tabWidth": 4
     },
     "lint-staged": {
-        "*.{md,mdx,json,ts}": [
+        "*.{md,mdx,json,ts,tsx}": [
             "prettier --write"
         ]
     },
     "scripts": {
-        "test": "lint-staged",
+        "lint": "lint-staged",
         "build": "rm -rf dist/  &&  tsc",
-        "prepublishOnly": "npm test  &&  npm run build"
+        "debug": "node dist/ test/source/ -p web-cell -f createCell -l test/layout",
+        "test": "rm -rf test/dist/ test/public  &&  npm run build  &&  npm run debug",
+        "prepublishOnly": "npm run lint  &&  npm test"
     },
     "husky": {
-        "pre-commit": "npm test",
-        "pre-push": "npm run build"
+        "pre-commit": "npm run lint",
+        "pre-push": "npm test"
     }
 }

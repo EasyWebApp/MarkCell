@@ -2,29 +2,7 @@ import unified from 'unified';
 import parseHTML from 'rehype-parse';
 import { highlight as HLParser, languages } from 'prismjs';
 import loadLanguages from 'prismjs/components/';
-
-interface Location {
-    line: number;
-    column: number;
-    offset: number;
-}
-
-interface Position {
-    start: Location;
-    end: Location;
-}
-
-export interface ASTNode {
-    type: 'root' | 'text' | 'element' | 'import' | 'jsx' | 'yaml' | 'toml';
-    value?: string;
-    position: Position;
-    tagName?: string;
-    properties?: {
-        className: string | string[];
-        [key: string]: any;
-    };
-    children?: ASTNode[];
-}
+import { ASTNode } from './type';
 
 export function stringifyJSON(data: any) {
     return JSON.stringify(data, null, 4);
@@ -32,7 +10,8 @@ export function stringifyJSON(data: any) {
 
 export const htmlParser = unified().use(parseHTML, { fragment: true });
 
-export const languageClass = /^language-(\w+)$/;
+export const MarkDown = /\.(markdown|mdx?)$/i,
+    languageClass = /^language-(\w+)$/;
 
 export function highlight(code: string, language: string) {
     language = language.toLowerCase();

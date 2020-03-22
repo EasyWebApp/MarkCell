@@ -4,8 +4,8 @@ import remarkStringify from 'remark-stringify';
 import frontmatter from 'remark-frontmatter';
 import remarkMdx from 'remark-mdx';
 import toHAST from 'mdast-util-to-hast';
+import { ASTNode } from './type';
 import {
-    ASTNode,
     languageClass,
     highlight,
     stringifyJSON,

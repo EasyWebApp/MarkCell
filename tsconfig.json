@@ -6,7 +6,9 @@
         "target": "ES6",
         "module": "CommonJS",
         "moduleResolution": "Node",
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "jsx": "react",
+        "jsxFactory": "createCell"
     },
     "include": ["source/**/*"]
 }

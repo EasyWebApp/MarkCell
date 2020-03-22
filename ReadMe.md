@@ -6,6 +6,19 @@ General [MDX][1] to [TSX][2] converter
 
 [![NPM](https://nodei.co/npm/mark-cell.png?downloads=true&downloadRank=true&stars=true)][4]
 
+## Command-line interface
+
+    Usage: mark-cell [path] [options]
+
+    General MDX to TSX converter
+
+    Options:
+        -V, --version         output the version number
+        -p, --package <name>  NPM package name of the Component Engine
+        -f, --factory <name>  Function name of JSX factory
+        -l, --layout <path>   Path of Layouts module
+        -h, --help            display help for command
+
 ## Example
 
 ```shell
