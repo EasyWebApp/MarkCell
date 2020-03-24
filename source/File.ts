@@ -1,20 +1,9 @@
-import { promisify } from 'util';
-import {
-    readdir,
-    readFile,
-    statSync,
-    existsSync,
-    mkdirSync,
-    writeFile
-} from 'fs';
+import { promises, statSync, existsSync, mkdirSync, writeFile } from 'fs';
 import { join, relative, resolve } from 'path';
 import { register } from 'ts-node';
 
-export const readFolder = promisify(readdir),
-    loadFile = promisify(readFile);
-
 export async function* traverseFiles(folder: string): AsyncGenerator<string> {
-    for (const name of await readFolder(folder)) {
+    for (const name of await promises.readdir(folder)) {
         const path = join(folder, name);
 
         if (statSync(path).isDirectory()) yield* traverseFiles(path);
@@ -34,7 +23,7 @@ export function saveFile(path: string, data: any) {
 
 const module_path = join(module.filename, '../');
 
-register();
+register({ compilerOptions: { module: 'CommonJS' } });
 
 export function loadModule(path: string) {
     return import(relative(module_path, resolve(path)));

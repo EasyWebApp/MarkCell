@@ -25,3 +25,7 @@ export function highlight(code: string, language: string) {
 
 export { parse as parseYAML } from 'yaml';
 export { parse as parseTOML } from 'toml';
+
+export function log(type: string, content: string) {
+    console.log(`[${type}] ${content}`);
+}

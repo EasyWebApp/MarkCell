@@ -1,10 +1,11 @@
 #! /usr/bin/env node
 
 import { join, resolve } from 'path';
+import { promises } from 'fs';
 import Commander from 'commander';
 
-import { traverseFiles, loadFile, saveFile } from './File';
-import { MarkDown } from './utility';
+import { traverseFiles, saveFile } from './File';
+import { MarkDown, log } from './utility';
 import {
     MarkdownMeta,
     mdx2jsx,
@@ -33,13 +34,15 @@ const [
 (async () => {
     const list: MarkdownMeta[] = [];
 
+    console.group('TSX');
+
     for await (const path of traverseFiles(in_folder))
         if (MarkDown.test(path)) {
             const file = join(out_folder, path.slice(in_folder.length))
                     .replace(/\\/g, '/')
                     .replace(MarkDown, '.tsx'),
                 { code, meta } = mdx2jsx(
-                    (await loadFile(path)) + '',
+                    (await promises.readFile(path)) + '',
                     Commander.package,
                     Commander.factory
                 );
@@ -51,14 +54,22 @@ const [
                 meta
             });
 
-            console.log(`[save] ${resolve(file)}`);
+            log('save', resolve(file));
         }
 
-    if (!list[0]) return;
+    if (list[0]) {
+        const path = join(out_folder, 'index.ts');
 
-    await saveFile(join(out_folder, 'index.ts'), createAsyncIndex(list));
+        await saveFile(path, createAsyncIndex(list));
+
+        log('save', resolve(path));
+    }
+
+    console.groupEnd();
 
     if (!Commander.layout) return;
+
+    console.group('HTML');
 
     for await (let { path, code } of renderPages(
         out_folder,
@@ -68,6 +79,8 @@ const [
 
         await saveFile(path, code);
 
-        console.log('[save] ' + resolve(path));
+        log('save', resolve(path));
     }
+
+    console.groupEnd();
 })();
