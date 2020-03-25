@@ -1,10 +1,12 @@
 import { parseMDX, stringifyMDX } from './parser';
 import {
     ASTNode,
-    PageRoute,
-    GroupMap,
     PageMeta,
     GroupKey,
+    GroupPageMeta,
+    PageRoute,
+    GroupPageMap,
+    GroupKeys,
     LayoutMap
 } from './type';
 import { parseYAML, parseTOML, stringifyJSON } from './utility';
@@ -91,17 +93,39 @@ export function createAsyncIndex(list: MarkdownMeta[]) {
 ];`;
 }
 
-export async function buildData(page_folder: string) {
-    const page_list: PageRoute[] = (await loadModule(page_folder)).default,
-        groups: { [group: string]: GroupMap } = {};
+function* toPages(
+    layout: 'pages' | GroupKey,
+    title: string,
+    list: PageMeta[],
+    pageSize: number
+): Generator<GroupPageMeta> {
+    const count = Math.ceil(list.length / pageSize);
 
-    const pages = page_list
+    for (let i = 0; i < count; i++) {
+        const pages = list.slice(pageSize * i, pageSize * (i + 1)),
+            path =
+                layout === 'pages' && !i
+                    ? ''
+                    : join(layout, title, !i ? '' : i + 1 + '').replace(
+                          /\\/g,
+                          '/'
+                      );
+        yield { layout, title: title || layout, path, pages };
+    }
+}
+
+export async function buildData(page_folder: string, pageSize: number) {
+    const page_list: PageRoute[] = (await loadModule(page_folder)).default,
+        groups: GroupPageMap = {} as GroupPageMap;
+
+    const posts = page_list
         .map(({ meta, paths: [path], type, component }) => {
             const { birthtime, mtime } = statSync(
                 join(page_folder, path + '.' + type)
             );
 
             const page: PageMeta = {
+                layout: 'article',
                 date: birthtime.toJSON(),
                 updated: mtime.toJSON(),
                 ...meta,
@@ -115,60 +139,73 @@ export async function buildData(page_folder: string) {
         })
         .sort(({ date: A }, { date: B }) => B.localeCompare(A));
 
-    for (const key of ['authors', 'tags', 'categories', 'archives'])
-        groups[key] = groupBy(pages, ({ [key as GroupKey]: list }) => list);
+    for (const key of Object.keys(GroupKeys)) {
+        const group = groupBy(posts, ({ [key as GroupKey]: list }) => list);
 
-    return { pages, groups };
+        for (const title in group)
+            group[title] = [
+                ...toPages(key as GroupKey, title, group[title], pageSize)
+            ];
+
+        groups[key] = group;
+    }
+
+    return {
+        posts,
+        pages: [...toPages('pages', '', posts, pageSize)],
+        groups
+    };
 }
 
 export async function* renderPages(
     page_folder: string,
     layout_folder: string,
-    pagination = 10
+    pageSize = 10
 ) {
-    const { pages, groups } = await buildData(page_folder),
+    const { posts, pages, groups } = await buildData(page_folder, pageSize),
         layouts: LayoutMap = await loadModule(layout_folder);
 
-    for (const { component, ...meta } of pages) {
+    const site = { posts, pages, ...groups };
+
+    for (let i = 0, meta: PageMeta; (meta = posts[i]); i++) {
         const Layout = layouts[meta.layout];
 
         if (!Layout)
             throw new ReferenceError(`Can't find "${meta.layout}" layout`);
 
-        const Content = await component();
+        const Content = await meta.component();
 
         yield {
             path: meta.path,
             code: renderToStaticMarkup(
-                <Layout {...meta} site={groups}>
+                <Layout
+                    {...meta}
+                    prev={posts[i + 1]}
+                    next={posts[i - 1]}
+                    site={site}
+                >
                     <Content />
                 </Layout>
             )
         };
     }
 
-    for (const [key, group] of Object.entries({
-        pages: { article: pages },
-        ...groups
-    })) {
-        const Layout = layouts[key];
+    for (const group of [{ article: pages }, ...Object.values(groups)])
+        for (const list of Object.values(group))
+            for (let i = 0, page: GroupPageMeta; (page = list[i]); i++) {
+                const Layout = layouts[page.layout];
 
-        for (let [title, list] of Object.entries(group)) {
-            const page = Math.ceil(list.length / pagination);
-
-            for (let i = 0; i < page; i++) {
-                const pages = list.slice(pagination * i, pagination * (i + 1));
-
-                yield {
-                    path:
-                        key === 'pages' && !i
-                            ? ''
-                            : join(key, title, i + 1 + ''),
-                    code: renderToStaticMarkup(
-                        <Layout title={title} pages={pages} site={groups} />
-                    )
-                };
+                if (Layout)
+                    yield {
+                        path: page.path,
+                        code: renderToStaticMarkup(
+                            <Layout
+                                {...page}
+                                prev={list[i + 1]}
+                                next={list[i - 1]}
+                                site={site}
+                            />
+                        )
+                    };
             }
-        }
-    }
 }

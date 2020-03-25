@@ -42,36 +42,44 @@ export interface PageRoute {
 
 export interface PageMeta extends DocumentMeta {
     path: string;
-    categories: string[];
+    categories?: string[];
     archives?: string[];
 }
 
-export type GroupKey = 'authors' | 'tags' | 'categories' | 'archives';
-
-export type GroupMap = { [name: string]: PageMeta[] };
-
-export interface PageProps extends PageMeta, WebCellProps {
-    site: {
-        pages: PageMeta[];
-        authors: GroupMap;
-        tags: GroupMap;
-        categories: GroupMap;
-        archives: GroupMap;
-    };
-}
-
-export interface GroupPageProps extends PageProps {
+export interface GroupPageMeta extends PageMeta {
     pages: PageMeta[];
 }
 
-export type GroupLayout = (props: GroupPageProps) => VNodeChildElement;
+export enum GroupKeys {
+    authors,
+    tags,
+    categories,
+    archives
+}
+export type GroupKey = keyof typeof GroupKeys;
+
+export type GroupPageMap = {
+    [group in GroupKey]: { [name: string]: GroupPageMeta[] };
+};
+
+export interface PageProps extends PageMeta, WebCellProps {
+    prev?: PageMeta;
+    next?: PageMeta;
+    pages?: PageMeta[];
+    site: GroupPageMap & {
+        posts: PageMeta[];
+        pages: GroupPageMeta[];
+    };
+}
+
+export type LayoutComponent = (props: PageProps) => VNodeChildElement;
 
 export interface LayoutMap {
-    article: (props: PageProps) => VNodeChildElement;
-    pages: GroupLayout;
-    authors?: GroupLayout;
-    tags?: GroupLayout;
-    categories?: GroupLayout;
-    archives?: GroupLayout;
-    [key: string]: (...params: any[]) => VNodeChildElement;
+    article: LayoutComponent;
+    pages: LayoutComponent;
+    authors?: LayoutComponent;
+    tags?: LayoutComponent;
+    categories?: LayoutComponent;
+    archives?: LayoutComponent;
+    [key: string]: LayoutComponent;
 }

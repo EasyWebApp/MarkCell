@@ -10,5 +10,13 @@
         "jsx": "react",
         "jsxFactory": "createCell"
     },
-    "include": ["source/**/*"]
+    "include": ["source/**/*"],
+    "typedocOptions": {
+        "name": "MarkCell",
+        "mode": "file",
+        "excludeExternals": true,
+        "excludeNotExported": true,
+        "readme": "./ReadMe.md",
+        "out": "docs/"
+    }
 }

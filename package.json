@@ -1,18 +1,21 @@
 {
     "name": "mark-cell",
-    "version": "0.4.0",
+    "version": "0.4.1",
     "license": "LGPL-3.0",
     "author": "shiy2008@gmail.com",
-    "description": "General MDX to TSX converter",
+    "description": "General MDX to TSX/HTML converter, inspired by Hexo & Gatsby",
     "keywords": [
         "mdx",
         "tsx",
-        "converter",
         "jsx",
+        "converter",
+        "generator",
         "react",
-        "web-cell"
+        "web-cell",
+        "hexo",
+        "gatsby"
     ],
-    "homepage": "https://github.com/EasyWebApp/MarkCell#readme",
+    "homepage": "https://web-cell.dev/MarkCell/",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/EasyWebApp/MarkCell.git"
@@ -50,7 +53,8 @@
         "husky": "^4.2.3",
         "lint-staged": "^10.0.9",
         "prettier": "^2.0.2",
-        "snabbdom": "^0.7.4"
+        "snabbdom": "^0.7.4",
+        "typedoc": "^0.17.3"
     },
     "prettier": {
         "singleQuote": true,
@@ -68,10 +72,11 @@
         "build": "rm -rf dist/  &&  tsc",
         "debug": "node dist/ test/source/ -p web-cell -f createCell -l test/layout",
         "test": "rm -rf test/dist/ test/public  &&  npm run build  &&  npm run debug",
-        "prepublishOnly": "npm run lint  &&  npm test"
+        "pack-docs": "typedoc",
+        "prepublishOnly": "npm run lint  &&  npm test  &&  typedoc"
     },
     "husky": {
         "pre-commit": "npm run lint",
-        "pre-push": "npm test"
+        "pre-push": "npm test  &&  npm run pack-docs"
     }
 }

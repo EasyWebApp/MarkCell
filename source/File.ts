@@ -23,7 +23,10 @@ export function saveFile(path: string, data: any) {
 
 const module_path = join(module.filename, '../');
 
-register({ compilerOptions: { module: 'CommonJS' } });
+register({
+    ignore: [],
+    compilerOptions: { module: 'CommonJS' }
+});
 
 export function loadModule(path: string) {
     return import(relative(module_path, resolve(path)));

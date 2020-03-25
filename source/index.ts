@@ -14,8 +14,8 @@ import {
 } from './generator';
 
 Commander.name('mark-cell')
-    .version('0.4.0-alpha.0')
-    .description('General MDX to TSX converter')
+    .version('0.4.1')
+    .description('General MDX to TSX/HTML converter, inspired by Hexo & Gatsby')
     .usage('[path] [options]')
     .option(
         '-p, --package <name>',
@@ -24,6 +24,7 @@ Commander.name('mark-cell')
     )
     .option('-f, --factory <name>', 'Function name of JSX factory', /^\w+$/)
     .option('-l, --layout <path>', 'Path of Layouts module')
+    .option('-s, --pageSize <number>', 'Pagination size of Group pages')
     .parse(process.argv);
 
 const [
@@ -73,7 +74,8 @@ const [
 
     for await (let { path, code } of renderPages(
         out_folder,
-        Commander.layout
+        Commander.layout,
+        Commander.pageSize
     )) {
         path = join(in_folder, '../public', path, 'index.html');
 
