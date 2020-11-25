@@ -25,7 +25,7 @@ export interface ASTNode {
 
 export interface DocumentMeta {
     layout?: string;
-    title: string;
+    title?: string;
     date?: string;
     updated?: string;
     authors?: string[];

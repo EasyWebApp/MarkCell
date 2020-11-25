@@ -1,5 +1,6 @@
 #! /usr/bin/env node
 
+import 'regenerator-runtime';
 import { join, resolve } from 'path';
 import { promises } from 'fs';
 import Commander from 'commander';

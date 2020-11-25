@@ -1,4 +1,5 @@
 import { createCell } from 'web-cell';
+import { formatDate } from 'web-utility';
 import { PageProps } from '../source/type';
 
 function Frame({
@@ -60,7 +61,7 @@ function GroupFrame({ pages, defaultSlot, ...props }: PageProps) {
                     <h2>
                         <a href={path}>{title}</a>
                     </h2>
-                    {new Date(date).toLocaleString()} created by{' '}
+                    {formatDate(date, 'YYYY-MM-DD HH:mm:ss')} created by{' '}
                     {authors?.join(', ')}
                 </section>
             ))}

@@ -1,6 +1,6 @@
 {
     "name": "mark-cell",
-    "version": "0.4.1",
+    "version": "0.4.5",
     "license": "LGPL-3.0",
     "author": "shiy2008@gmail.com",
     "description": "General MDX to TSX/HTML converter, inspired by Hexo & Gatsby",
@@ -28,33 +28,38 @@
         "node": "^10.0.0"
     },
     "dependencies": {
-        "commander": "^5.0.0",
-        "jsdom": "^16.2.1",
-        "mdast-util-to-hast": "^8.1.0",
-        "prismjs": "^1.19.0",
-        "rehype-parse": "^6.0.2",
-        "remark-frontmatter": "^1.3.3",
-        "remark-mdx": "^1.5.7",
-        "remark-parse": "^7.0.2",
-        "remark-stringify": "^7.0.4",
+        "commander": "^6.2.0",
+        "jsdom": "^16.4.0",
+        "mdast-util-to-hast": "^9.1.2",
+        "prismjs": "^1.22.0",
+        "regenerator-runtime": "^0.13.7",
+        "rehype-parse": "^7.0.1",
+        "remark-frontmatter": "^2.0.0",
+        "remark-mdx": "^1.6.21",
+        "remark-parse": "^8.0.3",
+        "remark-stringify": "^8.1.1",
         "toml": "^3.0.0",
-        "ts-node": "^8.8.1",
-        "typescript": "^3.8.3",
-        "unified": "^8.4.2",
-        "web-cell": "^2.0.0-rc.20",
-        "web-utility": "^0.12.1",
-        "yaml": "^1.8.3"
+        "ts-node": "^9.0.0",
+        "ts-transform-asset": "^3.1.0",
+        "ts-transform-css-modules": "^0.3.3",
+        "ttypescript": "^1.5.12",
+        "typescript": "^4.1.2",
+        "unified": "^9.2.0",
+        "web-cell": "^2.2.0",
+        "web-utility": "^2.0.0",
+        "yaml": "^1.10.0"
     },
     "devDependencies": {
-        "@types/jsdom": "^16.1.1",
-        "@types/node": "^13.9.3",
-        "@types/prismjs": "^1.16.0",
-        "@types/yaml": "^1.2.0",
-        "husky": "^4.2.3",
-        "lint-staged": "^10.0.9",
-        "prettier": "^2.0.2",
-        "snabbdom": "^0.7.4",
-        "typedoc": "^0.17.3"
+        "@types/jsdom": "^16.2.5",
+        "@types/node": "^14.14.10",
+        "@types/prismjs": "^1.16.2",
+        "@types/yaml": "^1.9.7",
+        "husky": "^4.3.0",
+        "koapache": "^2.1.1",
+        "lint-staged": "^10.5.2",
+        "prettier": "^2.2.0",
+        "snabbdom": "^1.0.1",
+        "typedoc": "^0.19.2"
     },
     "prettier": {
         "singleQuote": true,
@@ -63,15 +68,14 @@
         "tabWidth": 4
     },
     "lint-staged": {
-        "*.{md,mdx,json,ts,tsx}": [
-            "prettier --write"
-        ]
+        "*.{md,mdx,json,ts,tsx}": "prettier --write"
     },
     "scripts": {
         "lint": "lint-staged",
         "build": "rm -rf dist/  &&  tsc",
-        "debug": "node dist/ test/source/ -p web-cell -f createCell -l test/layout",
-        "test": "rm -rf test/dist/ test/public  &&  npm run build  &&  npm run debug",
+        "debug": "cd test/  &&  rm -rf dist/ public/  &&  node ../dist/ source/ -p web-cell -f createCell -l layout/",
+        "test": "npm run build  &&  npm run debug",
+        "start": "npm run debug  &&  web-server test/public/ -o",
         "pack-docs": "typedoc",
         "prepublishOnly": "npm run lint  &&  npm test  &&  typedoc"
     },

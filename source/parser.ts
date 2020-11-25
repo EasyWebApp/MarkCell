@@ -13,7 +13,7 @@ import {
     parseTOML
 } from './utility';
 
-export function parseMDX(raw: string): ASTNode {
+export function parseMDX(raw: string) {
     const result = unified()
         .use(remarkParse)
         .use(remarkStringify)
@@ -23,20 +23,20 @@ export function parseMDX(raw: string): ASTNode {
 
     return toHAST(result, {
         handlers: {
-            yaml(h, node: ASTNode) {
+            yaml(h, node) {
                 return { ...node, type: 'yaml' };
             },
-            toml(h, node: ASTNode) {
+            toml(h, node) {
                 return { ...node, type: 'toml' };
             },
-            import(h, node: ASTNode) {
+            import(h, node) {
                 return { ...node, type: 'import' };
             },
-            jsx(h, node: ASTNode) {
+            jsx(h, node) {
                 return { ...node, type: 'jsx' };
             }
         }
-    });
+    }) as ASTNode;
 }
 
 export function highlightCode(node: ASTNode) {
@@ -94,10 +94,7 @@ export function stringifyMDX(node: ASTNode): string {
 
     const { type, value, children = [] } = node;
 
-    const childNodes = children
-        .map(stringifyMDX)
-        .filter(Boolean)
-        .join('\n');
+    const childNodes = children.map(stringifyMDX).filter(Boolean).join('\n');
 
     switch (type) {
         case 'root':
