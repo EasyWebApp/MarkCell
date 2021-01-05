@@ -1,12 +1,8 @@
 import { WebCellProps, createCell } from 'web-cell';
 
-interface ExampleProps extends WebCellProps {
-    title?: string;
-}
-
-export function Example({ title, defaultSlot }: ExampleProps) {
+export function Example({ defaultSlot, ...rest }: WebCellProps) {
     return (
-        <div className="border bg-white p-3" title={title}>
+        <div {...rest} className="border bg-white p-3">
             {defaultSlot}
         </div>
     );

@@ -2,13 +2,15 @@
 layout: article
 title: test
 authors:
-  - TechQuery
+    - TechQuery
 tags:
-  - test
+    - test
 ---
 
 import { Example } from '../widget';
 
 ## Test
 
-<Example title="1">test</Example>
+<Example id={`example-${Date.now()}`} title="1">
+    test
+</Example>

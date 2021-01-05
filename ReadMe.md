@@ -3,7 +3,7 @@
 General [MDX][1] to [TSX][2]/HTML converter, inspired by [Hexo][3] & [Gatsby][4]
 
 [![NPM Dependency](https://david-dm.org/EasyWebApp/MarkCell.svg)][5]
-[![Build Status](https://travis-ci.com/EasyWebApp/MarkCell.svg?branch=master)][6]
+[![CI & CD](https://github.com/EasyWebApp/MarkCell/workflows/CI%20&%20CD/badge.svg)][6]
 
 [![NPM](https://nodei.co/npm/mark-cell.png?downloads=true&downloadRank=true&stars=true)][7]
 
@@ -34,5 +34,5 @@ https://github.com/EasyWebApp/mark-wiki
 [3]: https://hexo.io/
 [4]: https://gatsbyjs.org/
 [5]: https://david-dm.org/EasyWebApp/MarkCell
-[6]: https://travis-ci.com/EasyWebApp/MarkCell
+[6]: https://github.com/EasyWebApp/MarkCell/actions
 [7]: https://nodei.co/npm/mark-cell/

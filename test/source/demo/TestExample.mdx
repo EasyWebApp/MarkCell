@@ -1,0 +1,17 @@
++++
+layout = "article"
+title = "Test Example"
++++
+
+## Example
+
+```TSX
+<Example
+    title="1"
+    onClick={({ target }) =>
+        console.log(`${Date.now()}: ${(target as HTMLElement).textContent}`)
+    }
+>
+    example
+</Example>
+```

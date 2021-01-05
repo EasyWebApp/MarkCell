@@ -1,6 +1,6 @@
 {
     "name": "mark-cell",
-    "version": "0.4.5",
+    "version": "0.4.8",
     "license": "LGPL-3.0",
     "author": "shiy2008@gmail.com",
     "description": "General MDX to TSX/HTML converter, inspired by Hexo & Gatsby",
@@ -25,41 +25,43 @@
     },
     "bin": "dist/index.js",
     "engines": {
-        "node": "^10.0.0"
+        "node": ">= 10.0.0"
     },
     "dependencies": {
-        "commander": "^6.2.0",
+        "@peculiar/webcrypto": "^1.1.4",
+        "commander": "^6.2.1",
         "jsdom": "^16.4.0",
         "mdast-util-to-hast": "^9.1.2",
-        "prismjs": "^1.22.0",
+        "prismjs": "^1.23.0",
         "regenerator-runtime": "^0.13.7",
         "rehype-parse": "^7.0.1",
         "remark-frontmatter": "^2.0.0",
-        "remark-mdx": "^1.6.21",
+        "remark-mdx": "^1.6.22",
         "remark-parse": "^8.0.3",
         "remark-stringify": "^8.1.1",
         "toml": "^3.0.0",
-        "ts-node": "^9.0.0",
+        "ts-node": "^9.1.1",
         "ts-transform-asset": "^3.1.0",
         "ts-transform-css-modules": "^0.3.3",
         "ttypescript": "^1.5.12",
-        "typescript": "^4.1.2",
+        "typescript": "^4.1.3",
         "unified": "^9.2.0",
-        "web-cell": "^2.2.0",
-        "web-utility": "^2.0.0",
+        "web-cell": "^2.3.0-beta.6",
+        "web-utility": "^2.4.1",
         "yaml": "^1.10.0"
     },
     "devDependencies": {
         "@types/jsdom": "^16.2.5",
-        "@types/node": "^14.14.10",
+        "@types/node": "^14.14.20",
         "@types/prismjs": "^1.16.2",
         "@types/yaml": "^1.9.7",
-        "husky": "^4.3.0",
+        "element-internals-polyfill": "^0.1.1",
+        "husky": "^4.3.6",
         "koapache": "^2.1.1",
-        "lint-staged": "^10.5.2",
-        "prettier": "^2.2.0",
-        "snabbdom": "^1.0.1",
-        "typedoc": "^0.19.2"
+        "lint-staged": "^10.5.3",
+        "prettier": "^2.2.1",
+        "snabbdom": "^2.1.0",
+        "typedoc": "^0.20.12"
     },
     "prettier": {
         "singleQuote": true,
@@ -76,8 +78,8 @@
         "debug": "cd test/  &&  rm -rf dist/ public/  &&  node ../dist/ source/ -p web-cell -f createCell -l layout/",
         "test": "npm run build  &&  npm run debug",
         "start": "npm run debug  &&  web-server test/public/ -o",
-        "pack-docs": "typedoc",
-        "prepublishOnly": "npm run lint  &&  npm test  &&  typedoc"
+        "pack-docs": "typedoc source/",
+        "prepublishOnly": "npm run lint  &&  npm test  &&  npm run pack-docs"
     },
     "husky": {
         "pre-commit": "npm run lint",

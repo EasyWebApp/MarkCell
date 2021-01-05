@@ -34,7 +34,7 @@ export interface DocumentMeta {
 }
 
 export interface PageRoute {
-    type: string;
+    file: string;
     paths: string[];
     component: () => Promise<Function>;
     meta: DocumentMeta;

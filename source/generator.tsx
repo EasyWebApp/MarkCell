@@ -1,3 +1,9 @@
+import { extname, join } from 'path';
+import { statSync } from 'fs';
+import './polyfill';
+import { renderToStaticMarkup, createCell, toHyphenCase } from 'web-cell';
+import { groupBy } from 'web-utility';
+
 import { parseMDX, stringifyMDX } from './parser';
 import {
     ASTNode,
@@ -11,16 +17,12 @@ import {
 } from './type';
 import { parseYAML, parseTOML, stringifyJSON } from './utility';
 import { loadModule } from './File';
-import { join } from 'path';
-import { statSync } from 'fs';
-import './polyfill';
-import { renderToStaticMarkup, createCell } from 'web-cell';
-import { groupBy } from 'web-utility';
 
 export function mdx2jsx(
     raw: string,
     library = 'react',
-    factory = 'createElement'
+    factory = 'createElement',
+    fragment = 'Fragment'
 ) {
     const { children, ...rest } = parseMDX(raw);
 
@@ -57,13 +59,14 @@ export function mdx2jsx(
         .filter(Boolean)[0];
 
     const code = `/* @jsx ${factory} */
-import { ${factory}, Fragment } from '${library}';
+/* @jsxFrag ${fragment} */
+import { ${factory}, ${fragment} } from '${library}';
 ${stringifyMDX(top)}
 
 export function Content() {
-    return <Fragment>
+    return <>
         ${stringifyMDX(component)}
-    </Fragment>;
+    </>;
 }`;
 
     return { meta, code };
@@ -77,14 +80,20 @@ export interface MarkdownMeta {
 export function createAsyncIndex(list: MarkdownMeta[]) {
     return `export default [${list
         .map(({ path, meta }) => {
-            const parts = path.split('.');
-            const type = parts.pop();
-            path = parts.join('.');
+            const type = extname(path).slice(1);
+
+            path = path.slice(0, -type.length - 1);
+
+            const parts = path.split(/[/\\]+/g);
+            const route = [...parts.slice(0, -1), toHyphenCase(parts.pop())]
+                .join('/')
+                .replace(/^\//, '')
+                .toLowerCase();
 
             return `
     {
-        type: '${type}',
-        paths: ['${path.replace(/^\//, '').toLowerCase()}'],
+        file: '${path}.${type}',
+        paths: ['${route}'],
         component: async () => (await import('.${path}')).Content,
         meta: ${stringifyJSON(meta)}
     }`;
@@ -119,10 +128,8 @@ export async function buildData(page_folder: string, pageSize: number) {
         groups: GroupPageMap = {} as GroupPageMap;
 
     const posts = page_list
-        .map(({ meta, paths: [path], type, component }) => {
-            const { birthtime, mtime } = statSync(
-                join(page_folder, path + '.' + type)
-            );
+        .map(({ meta, paths: [path], file, component }) => {
+            const { birthtime, mtime } = statSync(join(page_folder, file));
 
             const page: PageMeta = {
                 layout: 'article',

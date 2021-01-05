@@ -107,7 +107,7 @@ export function stringifyMDX(node: ASTNode): string {
         case 'jsx':
             return value;
         case 'text':
-            return value && `{\`${value}\`}`;
+            return value && `{${JSON.stringify(value)}}`;
         case 'element':
             return stringifyElement(node, childNodes);
     }

@@ -24,15 +24,18 @@ Commander.name('mark-cell')
         /^[\w-]+$/
     )
     .option('-f, --factory <name>', 'Function name of JSX factory', /^\w+$/)
+    .option(
+        '-F, --fragment <name>',
+        'Function name of JSX Fragment factory',
+        /^\w+$/
+    )
     .option('-l, --layout <path>', 'Path of Layouts module')
     .option('-s, --pageSize <number>', 'Pagination size of Group pages')
     .parse(process.argv);
 
-const [
-    in_folder = '.',
-    out_folder = join(in_folder, '../dist')
-] = Commander.args;
-
+const { package: library, factory, fragment, layout, pageSize } = Commander,
+    [in_folder = '.', out_folder = join(in_folder, '../dist')] = Commander.args;
+    
 (async () => {
     const list: MarkdownMeta[] = [];
 
@@ -45,10 +48,10 @@ const [
                     .replace(MarkDown, '.tsx'),
                 { code, meta } = mdx2jsx(
                     (await promises.readFile(path)) + '',
-                    Commander.package,
-                    Commander.factory
+                    library,
+                    factory,
+                    fragment
                 );
-
             await saveFile(file, code);
 
             list.push({
@@ -69,14 +72,14 @@ const [
 
     console.groupEnd();
 
-    if (!Commander.layout) return;
+    if (!layout) return;
 
     console.group('HTML');
 
     for await (let { path, code } of renderPages(
         out_folder,
-        Commander.layout,
-        Commander.pageSize
+        layout,
+        pageSize
     )) {
         path = join(in_folder, '../public', path, 'index.html');
 
