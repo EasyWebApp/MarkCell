@@ -25,6 +25,7 @@ https://github.com/EasyWebApp/mark-wiki
         -V, --version            output the version number
         -p, --package <name>     NPM package name of the Component Engine
         -f, --factory <name>     Function name of JSX factory
+        -F, --fragment <name>    Function name of JSX Fragment component
         -l, --layout <path>      Path of Layouts module
         -s, --pageSize <number>  Pagination size of Group pages
         -h, --help               display help for command

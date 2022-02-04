@@ -26,7 +26,7 @@ Commander.name('mark-cell')
     .option('-f, --factory <name>', 'Function name of JSX factory', /^\w+$/)
     .option(
         '-F, --fragment <name>',
-        'Function name of JSX Fragment factory',
+        'Function name of JSX Fragment component',
         /^\w+$/
     )
     .option('-l, --layout <path>', 'Path of Layouts module')

@@ -1,8 +1,8 @@
 name: CI & CD
 on:
     push:
-        branches:
-            - master
+        tags:
+            - v*
 jobs:
     Build-and-Deploy:
         runs-on: ubuntu-latest
@@ -10,14 +10,15 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v2
             - name: Use Node.js
-              uses: actions/setup-node@v2-beta
+              uses: actions/setup-node@v2
               with:
-                  node-version: '14'
-            - name: Install & build
-              run: |
-                  npm install
-                  npm test  
-                  npm run pack-docs
+                  node-version: 14
+                  registry-url: https://registry.npmjs.org
+                  cache: yarn
+            - name: Install, Build & Publish
+              run: yarn  &&  yarn publish
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
             - name: Deploy
               uses: peaceiris/actions-gh-pages@v3
               with:
