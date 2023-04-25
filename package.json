@@ -47,7 +47,7 @@
         "unified": "^9.2.2",
         "web-cell": "^2.3.0",
         "web-utility": "^3.0.0",
-        "yaml": "^1.10.2"
+        "yaml": "^2.2.2"
     },
     "devDependencies": {
         "@types/jsdom": "^16.2.14",
